@@ -18,10 +18,6 @@ class _ToDoListAppState extends State<ToDoListApp> {
           title: const Text('ToDo List'),
         ),
         body: const TasksMaster(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.add),
-        ),
       ),
     );
   }
