@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list_v1/providers/tasks_provider.dart';
 import 'package:todo_list_v1/screen/task_details.dart';
 import '../models/task.dart';
 import 'ask_form.dart';
@@ -16,15 +18,15 @@ class TasksMaster extends StatefulWidget {
 class _TasksMasterState extends State<TasksMaster>
   {
 
-  late List<Task> _tasks;
   late Future<List<Task>> _tasksFuture;
 
   @override
   void initState() {
     super.initState();
-    _tasksFuture = _fetchTasks();
+    _tasksFuture = context.read<TasksProvider>().readData(context); //_fetchTasks();
   }
 
+  /*
   Future<List<Task>> _fetchTasks() async {
     List<Task> tasks = [];
     Faker faker = new Faker();
@@ -37,58 +39,68 @@ class _TasksMasterState extends State<TasksMaster>
 
     return Future.delayed(Duration(seconds: 2), () => tasks);
   }
+   */
 
   @override
   Widget build(BuildContext context) {
+    final tasksProvider = Provider.of<TasksProvider>(context);
+
     return FutureBuilder(
         future: _tasksFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Une erreur s\'est produite'));
+            //return Center(child: Text('Une erreur s\'est produite'));
+            return Center(child: Text(snapshot.error.toString()));
           } else {
-            _tasks = snapshot.data as List<Task>;
+            //_tasks = snapshot.data as List<Task>;
             return Scaffold(
-                body: ListView.separated(
-                itemCount: _tasks!.length,
-                separatorBuilder: (context, index) => Divider(
-                      color: Colors.black,
-                      thickness: 1,
-                      indent: 30,
-                      endIndent: 30,
-                    ),
-                itemBuilder: (context, index) {
-                  return TaskPreview(
-                    task: _tasks[index],
-                    onTap: () async {
-                      var result = await Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          transitionDuration: Duration(milliseconds: 500),
-                          pageBuilder: (_, __, ___) =>
-                              TaskDetails(task: _tasks[index]),
-                          transitionsBuilder: (_, animation, __, child) {
-                            return SlideTransition(
-                              position: Tween<Offset>(
-                                begin: Offset(1.0, 0.0),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: child,
+                body: Consumer<TasksProvider>(
+                builder: (context,tasksProvider,child) {
+                  return ListView.separated(
+                      itemCount: tasksProvider
+                          .getTasks()
+                          .length,
+                      separatorBuilder: (context, index) =>
+                          Divider(
+                            color: Colors.black,
+                            thickness: 1,
+                            indent: 30,
+                            endIndent: 30,
+                          ),
+                      itemBuilder: (context, index) {
+                        return TaskPreview(
+                          task: tasksProvider.getTasks()[index],
+                          onTap: () async {
+                            var result = await Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                pageBuilder: (_, __, ___) =>
+                                    TaskDetails(
+                                        task: tasksProvider.getTasks()[index]),
+                                transitionsBuilder: (_, animation, __, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                              ),
                             );
+                            if (result != null) {
+                              tasksProvider.updateData(result);
+                            }
                           },
-                        ),
-                      );
-                      if (result != null) {
-                        setState(() {
-                          _tasks[index] =
-                              result; // Remplace la tâche par la tâche mise à jour.
-                        });
+                        );
                       }
-                    },
                   );
-                }
+                },
                 ),
+
               floatingActionButton: FloatingActionButton(
                 onPressed:  () async {
                   var result = await Navigator.push(
@@ -109,9 +121,9 @@ class _TasksMasterState extends State<TasksMaster>
                     ),
                   );
                   if (result != null) {
-                    setState(() {
-                      _tasks.insert(0, result); // Remplace la tâche par la tâche mise à jour.
-                    });
+                      //ajoute la nouvelle tache
+                    tasksProvider.addData(result, context);
+                      //_tasks.insert(0, result);
                   }
                 },
                 child: const Icon(Icons.add),
@@ -132,63 +144,18 @@ class TaskPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon =
         task.completed ? Icons.check_circle : Icons.radio_button_unchecked;
+
+    String remplacement = task.content.replaceAll('\n', '...\n');
+
     return ListTile(
       leading: Icon(icon),
       title: Text(task.title),
-      subtitle: Text(task.content),
+      subtitle: Text(
+        remplacement,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       onTap: onTap,
     );
   }
 }
-
-/*
-class Pseudo3dRouteBuilder extends PageRouteBuilder {
-  final Widget enterPage;
-  final Widget exitPage;
-  Pseudo3dRouteBuilder(this.exitPage, this.enterPage)
-      : super(
-    pageBuilder: (context, animation, secondaryAnimation) => enterPage,
-    transitionsBuilder: _transitionsBuilder(exitPage, enterPage),
-  );
-
-  static _transitionsBuilder(exitPage, enterPage) =>
-          (context, animation, secondaryAnimation, child) {
-        return Stack(
-          children: <Widget>[
-            SlideTransition(
-              position: Tween<Offset>(
-                begin: Offset.zero,
-                end: Offset(-1.0, 0.0),
-              ).animate(animation),
-              child: Container(
-                color: Colors.white,
-                child: Transform(
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.003)
-                    ..rotateY(pi / 2 * animation.value),
-                  alignment: FractionalOffset.centerRight,
-                  child: exitPage,
-                ),
-              ),
-            ),
-            SlideTransition(
-              position: Tween<Offset>(
-                begin: Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: Container(
-                color: Colors.white,
-                child: Transform(
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.003)
-                    ..rotateY(pi / 2 * (animation.value - 1)),
-                  alignment: FractionalOffset.centerLeft,
-                  child: enterPage,
-                ),
-              ),
-            )
-          ],
-        );
-      };
-}
- */
