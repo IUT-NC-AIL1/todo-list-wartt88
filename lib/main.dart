@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_list_v1/providers/tasks_provider.dart';
 import 'todo_list_app.dart';
 
 Future<void> main() async{
+  await dotenv.load(fileName: "assets/.env");
+  String url = dotenv.env['SUPABASE_URL']!;
+  String anonKey = dotenv.env['SUPABASE_API_KEY']!;
   await Supabase.initialize(
-      url: 'https://tggwxydzenqagiabfnuh.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRnZ3d4eWR6ZW5xYWdpYWJmbnVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYxMjM0NDIsImV4cCI6MjAwMTY5OTQ0Mn0.I6pXyFAekuamCUZrwm_kyTsWZd6JrBzArzMr83AXQA4');
+      url: url,
+      anonKey: anonKey);
   runApp(ChangeNotifierProvider(create: (context) => TasksProvider(), child:const ToDoListApp()));
 }
