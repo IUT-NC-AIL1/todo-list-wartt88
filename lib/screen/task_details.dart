@@ -51,7 +51,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Contenu'),
                       SizedBox(height: 8.0),
                       Container(
                         constraints: BoxConstraints(maxHeight: 200.0),
@@ -59,6 +58,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                         child: SingleChildScrollView(
                           child: TextFormField(
                             controller: _contentController,
+                            decoration: InputDecoration(
+                              labelText: 'Contenu',
+                            ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Champ obligatoire';
