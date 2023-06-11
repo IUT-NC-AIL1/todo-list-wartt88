@@ -22,8 +22,10 @@ class TaskFormState extends State<TaskForm> {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF335d9f),
         title: Text('Ajouter'),
       ),
+      backgroundColor: Color(0xFFD4D4D4),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -76,6 +78,9 @@ class TaskFormState extends State<TaskForm> {
                     Navigator.pop(context, t);
                   }
                 },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF335d9f)),
+                ),
                 child: Text('Ajouter'),
               )
             ],

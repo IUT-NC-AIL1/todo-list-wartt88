@@ -13,10 +13,16 @@ class _ToDoListAppState extends State<ToDoListApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
+      theme: ThemeData(
+        primaryColor: Color(0xFF335d9f),
+      ),
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFF335d9f),
+          shadowColor: Color(0xFF485862),
           title: const Text('ToDo List'),
         ),
+        backgroundColor: Color(0xFFD4D4D4),
         body: const TasksMaster(),
       ),
     );

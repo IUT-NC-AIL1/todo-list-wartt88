@@ -56,6 +56,7 @@ class _TasksMasterState extends State<TasksMaster>
           } else {
             //_tasks = snapshot.data as List<Task>;
             return Scaffold(
+                backgroundColor: Color(0xFFD4D4D4),
                 body: Consumer<TasksProvider>(
                 builder: (context,tasksProvider,child) {
                   return ListView.separated(
@@ -64,11 +65,11 @@ class _TasksMasterState extends State<TasksMaster>
                           .length,
                       separatorBuilder: (context, index) =>
                           Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                            indent: 30,
-                            endIndent: 30,
-                          ),
+                              color: Color(0xFF182c4d),
+                              thickness: 1,
+                              indent: 30,
+                              endIndent: 30,
+                            ),
                       itemBuilder: (context, index) {
                         return TaskPreview(
                           task: tasksProvider.getTasks()[index],
@@ -126,6 +127,7 @@ class _TasksMasterState extends State<TasksMaster>
                       //_tasks.insert(0, result);
                   }
                 },
+                backgroundColor: Color(0xFF182c4d),
                 child: const Icon(Icons.add),
               ),
             );
@@ -147,7 +149,8 @@ class TaskPreview extends StatelessWidget {
 
     String remplacement = task.content.replaceAll('\n', '...\n');
 
-    return ListTile(
+    return
+        ListTile(
       leading: Icon(icon),
       title: Text(task.title),
       subtitle: Text(

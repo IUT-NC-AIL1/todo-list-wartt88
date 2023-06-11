@@ -30,8 +30,10 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFF335d9f),
           title: Text('Modifier'),
         ),
+        backgroundColor: Color(0xFFD4D4D4),
         body: Form(
           key: _formKey,
           child: Padding(
@@ -94,6 +96,9 @@ class _TaskDetailsState extends State<TaskDetails> {
                       Navigator.pop(context, widget.task);
                     }
                   },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF335d9f)),  // Mettez la couleur que vous voulez ici
+                  ),
                   child: Text('Enregistrer'),
                 )
               ],
