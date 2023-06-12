@@ -12,6 +12,7 @@ class _ToDoListAppState extends State<ToDoListApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Material App',
       theme: ThemeData(
         primaryColor: Color(0xFF335d9f),
