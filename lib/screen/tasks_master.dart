@@ -150,15 +150,57 @@ class TaskPreview extends StatelessWidget {
     String remplacement = task.content.replaceAll('\n', '...\n');
 
     return
-        ListTile(
-      leading: Icon(icon),
-      title: Text(task.title),
-      subtitle: Text(
-        remplacement,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      onTap: onTap,
-    );
+      Dismissible(
+        key: Key('${task.id.toString()}'),
+        background: Container(
+          color: Color(0xFFCA0303),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+          alignment: Alignment.centerRight,
+          padding: EdgeInsets.only(right: 20),
+        ),
+        direction: DismissDirection.endToStart,
+        confirmDismiss: (direction) async {
+          return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Confirmation"),
+                content: Text("Voulez-vous vraiment supprimer cette tâche?"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("Oui"),
+                    onPressed: () {
+                      Provider.of<TasksProvider>(context,listen: false).deleteData(task);
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                  TextButton(
+                    child: Text("Non"),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: ListTile(
+          leading: Icon(icon),
+          title: Text(task.title),
+          subtitle: Text(
+            remplacement,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: onTap,
+        ),
+      );
+
+
+
   }
 }
