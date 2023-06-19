@@ -96,6 +96,9 @@ class _TasksMasterState extends State<TasksMaster>
                               tasksProvider.updateData(result);
                             }
                           },
+                          changeCompleted: () async {
+                              tasksProvider.updateData(tasksProvider.getTasks()[index]);
+                          }
                         );
                       }
                   );
@@ -136,15 +139,26 @@ class _TasksMasterState extends State<TasksMaster>
   }
 }
 
-class TaskPreview extends StatelessWidget {
+class TaskPreview extends StatefulWidget {
   final Task task;
   final VoidCallback onTap;
+  final VoidCallback changeCompleted;
 
-  const TaskPreview({super.key, required this.task, required this.onTap});
+  const TaskPreview({super.key, required this.task, required this.onTap, required  this.changeCompleted});
+
+  @override
+  _TasksPreviewState createState() => _TasksPreviewState(task: task, onTap: onTap, changeCompleted: changeCompleted);
+}
+class _TasksPreviewState extends State<TaskPreview> {
+  final Task task;
+  final VoidCallback onTap;
+  final VoidCallback changeCompleted;
+
+  _TasksPreviewState({required this.task, required this.onTap, required this.changeCompleted});
 
   @override
   Widget build(BuildContext context) {
-    final icon =
+    var icon =
         task.completed ? Icons.check_circle : Icons.radio_button_unchecked;
 
     String remplacement = task.content.replaceAll('\n', '...\n');
@@ -189,7 +203,17 @@ class TaskPreview extends StatelessWidget {
           );
         },
         child: ListTile(
-          leading: Icon(icon),
+          leading: GestureDetector(
+            onTap: () {
+              setState(() {
+                task.completed = !task.completed;
+                icon = task.completed ? Icons.check_circle : Icons.radio_button_unchecked;
+                changeCompleted();
+
+              });
+            },
+            child: Icon(icon),
+          ),
           title: Text(task.title),
           subtitle: Text(
             remplacement,
