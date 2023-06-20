@@ -98,6 +98,7 @@ class TasksProvider extends ChangeNotifier{
       ));
     }
     notifyListeners();
+
   }
 
   List<Task> getTasks(){

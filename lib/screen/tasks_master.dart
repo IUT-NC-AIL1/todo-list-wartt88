@@ -71,8 +71,10 @@ class _TasksMasterState extends State<TasksMaster>
                               endIndent: 30,
                             ),
                       itemBuilder: (context, index) {
+                        Task t = tasksProvider.getTasks()[index];
                         return TaskPreview(
-                          task: tasksProvider.getTasks()[index],
+                            key: ValueKey(t.id),
+                          task: t,
                           onTap: () async {
                             var result = await Navigator.push(
                               context,
@@ -80,7 +82,8 @@ class _TasksMasterState extends State<TasksMaster>
                                 transitionDuration: Duration(milliseconds: 500),
                                 pageBuilder: (_, __, ___) =>
                                     TaskDetails(
-                                        task: tasksProvider.getTasks()[index]),
+                                        //task: tasksProvider.getTasks()[index]),
+                                      task: t),
                                 transitionsBuilder: (_, animation, __, child) {
                                   return SlideTransition(
                                     position: Tween<Offset>(
